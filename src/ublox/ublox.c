@@ -12,5 +12,5 @@
 void ubx_init(unsigned int baud) { ubx_uart_create(baud); }
 
 size_t ubx_uart_receive(char *buffer, size_t buffer_size) {
-  ubx_read_inbound(buffer, buffer_size);
+  ubx_read_inbound((uint8_t *) buffer, buffer_size);
 }

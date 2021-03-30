@@ -2,29 +2,83 @@
 // Created by ricardo on 30/03/21.
 //
 
+#include "ublox/ublox.h"
 #include "ublox/ublox_read.h"
+#include "ublox/message/ubx_nav.h"
 
 #include <stdint.h>
+#include <stdio.h>
 
 #ifdef DECODE_NMEA
-char buffer_nmea[NMEA_BUFFER_SIZE];
-char *buffer_nmea_cursor = buffer_nmea;
+#define NMEA_STATE_READY 0
+#define NMEA_STATE_SYNC 1
+#define NMEA_STATE_RECVDATA 2
+#endif
+
+/*
+ *
+ */
+
+#ifdef DECODE_UBX
+#define UBX_STATE_READY 0
+#define UBX_STATE_SYNC 1
+#define UBX_STATE_WAIT_LEN 2
+#define UBX_STATE_RECVDATA 3
+#endif
+
+/*
+ *
+ */
+
+#ifdef DECODE_NMEA
+uint8_t buffer_nmea[NMEA_BUFFER_SIZE];
+uint8_t *buffer_nmea_cursor = buffer_nmea;
 uint8_t nmea_read_state = NMEA_STATE_READY;
+
+void _process_nmea() {
+    printf("Received NMEA: %s\n", buffer_nmea);
+}
 #endif
 
 //
 
 #ifdef DECODE_UBX
-char buffer_ubx[UBX_BUFFER_SIZE];
-char *buffer_ubx_cursor = buffer_ubx;
+void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length) {
+    // Validate packet checksum
+    uint8_t * buffer_ubx_ck_data = &buffer[2];
+    uint8_t ck_a = 0, ck_b = 0;
+    for(uint16_t i = 0; i < 4 + payload_length; i++) {
+        ck_a += buffer_ubx_ck_data[i];
+        ck_b += ck_a;
+    }
+
+    if (ck_a != buffer[buffer_length - 2] || ck_b != buffer[buffer_length - 1]) {
+        printf("Error validating UBX checksum: Expected %x %x, got %x %x.\n", ck_a, ck_b, buffer[buffer_length - 2], buffer[buffer_length - 1]);
+        return;
+    }
+
+    uint8_t packet_class = buffer[2];
+    uint8_t packet_id = buffer[3];
+    uint8_t * buffer_ubx_payload = &buffer[6];
+
+    switch (packet_class) {
+        case UBX_CLASS_NAV: {
+            message_process_ubx_nav(packet_id, buffer_ubx_payload, payload_length);
+            break;
+        }
+    }
+}
+
+#endif
+uint8_t buffer_ubx[UBX_BUFFER_SIZE];
+uint8_t *buffer_ubx_cursor = buffer_ubx;
 uint16_t ubx_payload_length = 0;
 uint8_t ubx_read_state = UBX_STATE_READY;
-#endif
 
-void ubx_read_inbound(char *buffer, size_t buffer_size) {
+void ubx_read_inbound(uint8_t *buffer, size_t buffer_size) {
     uint8_t c;
     for (size_t i = 0; i < buffer_size; i++) {
-        c = (uint8_t) (buffer[i] & 0xFF);
+        c = (buffer[i] & 0xFF);
 
 #ifdef DECODE_UBX
         switch (ubx_read_state) {
@@ -79,7 +133,10 @@ void ubx_read_inbound(char *buffer, size_t buffer_size) {
 
                 // We only stop the decoding process when all the bytes are received (6
                 // from the header, N from the payload, 2 for the checksum)
-                if (buffer_ubx_cursor - buffer_ubx == (6 + ubx_payload_length + 2)) {
+                size_t buffer_length = buffer_ubx_cursor - buffer_ubx;
+                if (buffer_length == (6 + ubx_payload_length + 2)) {
+                    _process_ubx(buffer_ubx, buffer_length, ubx_payload_length);
+
                     ubx_read_state = UBX_STATE_READY;
                     buffer_ubx_cursor = buffer_ubx;
                 }
@@ -121,7 +178,7 @@ void ubx_read_inbound(char *buffer, size_t buffer_size) {
                 if (c == NMEA_TERM_CHAR) {
                     // Replace the last read character (\r) with string termination char.
                     *(buffer_nmea_cursor - 1) = '\0';
-                    printf("Received NMEA: %s\n", buffer_nmea);
+                    _process_nmea();
 
                     nmea_read_state = NMEA_STATE_READY;
                     buffer_nmea_cursor = buffer_nmea;
