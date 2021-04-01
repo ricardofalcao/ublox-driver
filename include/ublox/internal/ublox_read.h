@@ -12,9 +12,6 @@
 #define NMEA_BUFFER_SIZE 1024
 #endif
 
-#define NMEA_SYNC_CHAR '$'
-#define NMEA_TERM_CHAR '\n'
-
 /*
  *
  */
@@ -22,9 +19,6 @@
 #ifdef DECODE_UBX
 #define UBX_BUFFER_SIZE 4096
 #endif
-
-#define UBX_SYNC_CHAR_1 0xB5
-#define UBX_SYNC_CHAR_2 0x62
 
 /*
  *

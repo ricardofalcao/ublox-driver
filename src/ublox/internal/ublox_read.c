@@ -3,8 +3,9 @@
 //
 
 #include "ublox/ublox.h"
-#include "ublox/ublox_read.h"
+#include "ublox/internal/ublox_read.h"
 #include "ublox/message/ubx_nav.h"
+#include "ublox/message/ubx_ack.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -36,7 +37,7 @@ uint8_t *buffer_nmea_cursor = buffer_nmea;
 uint8_t nmea_read_state = NMEA_STATE_READY;
 
 void _process_nmea() {
-    printf("Received NMEA: %s\n", buffer_nmea);
+    LOG("Received NMEA: %s\n", buffer_nmea);
 }
 #endif
 
@@ -53,7 +54,7 @@ void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length)
     }
 
     if (ck_a != buffer[buffer_length - 2] || ck_b != buffer[buffer_length - 1]) {
-        printf("Error validating UBX checksum: Expected %x %x, got %x %x.\n", ck_a, ck_b, buffer[buffer_length - 2], buffer[buffer_length - 1]);
+        LOG("Error validating UBX checksum: Expected %x %x, got %x %x.\n", ck_a, ck_b, buffer[buffer_length - 2], buffer[buffer_length - 1]);
         return;
     }
 
@@ -64,6 +65,10 @@ void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length)
     switch (packet_class) {
         case UBX_CLASS_NAV: {
             message_process_ubx_nav(packet_id, buffer_ubx_payload, payload_length);
+            break;
+        }
+        case UBX_CLASS_ACK: {
+            message_process_ubx_ack(packet_id, buffer_ubx_payload, payload_length);
             break;
         }
     }
