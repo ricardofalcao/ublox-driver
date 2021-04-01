@@ -24,6 +24,10 @@
  *
  */
 
-void ubx_read_inbound(uint8_t * buffer, size_t buffer_size);
+/*
+ * MUST BE CALLED BY THE TARGET PLATFORM
+ * Should be called whenever data is received.
+ */
+void ubx_uart_receive(char * buffer, size_t buffer_size);
 
 #endif //UBLOX_UBLOX_READ_H

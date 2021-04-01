@@ -33,7 +33,7 @@ void _process_pvt(uint8_t *payload, size_t payload_length) {
     _fix.time.hour = bits_read_uint8(payload + 8);
     _fix.time.minute = bits_read_uint8(payload + 9);
     _fix.time.second = bits_read_uint8(payload + 10);
-    _fix.time.flags = bits_read_uint8(payload + 11);
+    _fix.time.validity = bits_read_uint8(payload + 11);
     _fix.time.accuracy = bits_read_uint32(payload + 12);
     _fix.time.nanosecond = bits_read_int32(payload + 16);
 
@@ -59,7 +59,7 @@ void _process_pvt(uint8_t *payload, size_t payload_length) {
     _velocity.speed_accuracy = bits_read_uint32(payload + 68);
     _velocity.heading_accuracy = (float) bits_read_uint32(payload + 72) * 1E-5;
 
-    _fix.validity = bits_read_uint8(payload + 78);
+    _fix.invalidity = bits_read_uint8(payload + 78);
 
     _velocity.vehicle_heading = (float) bits_read_int32(payload + 84) * 1E-5;
     _velocity.magnetic_declination = (float) bits_read_int16(payload + 88) * 1E-2;
@@ -128,7 +128,7 @@ void _process_eoe(uint8_t *payload, size_t payload_length) {
     LOG("[%d/%d/%d %d:%d:%d.%d] Fix: %d(%d)  |  Lat: %.9f deg  | Lon: %.9f deg  | H: %.2f mm\n", ubx_fix.time.day, ubx_fix.time.month, ubx_fix.time.year, ubx_fix.time.hour, ubx_fix.time.minute, ubx_fix.time.second, ubx_fix.time.nanosecond, ubx_fix.type, !!(ubx_fix.flags & UBX_FIX_FLAG_OK), ubx_fix.latitude, ubx_fix.longitude, ubx_fix.height_msl);
 }
 
-void message_process_ubx_nav(uint8_t packet_id, uint8_t *payload, size_t payload_length) {
+void ubx_process_ubx_nav(uint8_t packet_id, uint8_t *payload, size_t payload_length) {
     switch (packet_id) {
 #ifdef UBX_SUBSCRIBE_PVT
         case UBX_MESSAGE_NAV_PVT: {

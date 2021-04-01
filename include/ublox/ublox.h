@@ -12,15 +12,19 @@
  *
  */
 
+/*
+ * Holds the current epoch fix data
+ */
 extern GpsFix_t ubx_fix;
+
+/*
+ * Holds the current epoch velocity data
+ */
 extern GpsVelocity_t ubx_velocity;
 
 /*
- *
+ * Initializes the driver. This opens the connection to the configured serial port, and exchanges configuration messages with the receiver.
  */
-
 void ubx_init();
-
-size_t ubx_uart_receive(char * buffer, size_t buffer_size);
 
 #endif//UBLOX_UBLOX_H

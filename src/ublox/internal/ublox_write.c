@@ -4,15 +4,15 @@
 
 #include <stdio.h>
 
+#include "ublox/internal/ublox_write.h"
 #include "ublox/ublox.h"
 #include "ublox/uart.h"
-#include "ublox/internal/ublox_write.h"
 
-void ubx_write_packet(uint8_t packet_class, uint8_t packet_id, uint8_t *payload, size_t payload_length) {
+void ubx_write_ubx_packet(uint8_t packet_class, uint8_t packet_id, uint8_t *payload, size_t payload_length) {
     // Validate packet checksum
     uint16_t payload_length16 = (uint16_t) payload_length;
-    uint8_t payload_length_msb = (payload_length >> 8) & 0xFF;
-    uint8_t payload_length_lsb = payload_length & 0xFF;
+    uint8_t payload_length_msb = (payload_length16 >> 8) & 0xFF;
+    uint8_t payload_length_lsb = payload_length16 & 0xFF;
 
     uint8_t ck_a = 0, ck_b = 0;
 

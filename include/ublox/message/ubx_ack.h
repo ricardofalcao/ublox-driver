@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-void message_process_ubx_ack(uint8_t packet_id, uint8_t * payload, size_t payload_length);
+void ubx_process_ubx_ack(uint8_t packet_id, uint8_t * payload, size_t payload_length);
 
 #endif
 

@@ -2,6 +2,8 @@
 // Created by ricardo on 30/03/21.
 //
 
+#include "linux_uart.h"
+
 #include "ublox/uart.h"
 #include "ublox/ublox.h"
 
@@ -17,7 +19,7 @@
 
 int serial_port = -1;
 
-void ubx_uart_create() {
+uint8_t ubx_uart_create() {
     if (serial_port >= 0) {
         ubx_uart_destroy();
     }
@@ -27,13 +29,13 @@ void ubx_uart_create() {
     // Check for errors
     if (serial_port < 0) {
         printf("Error %i from open: %s\n", errno, strerror(errno));
-        return;
+        return 0;
     }
 
     struct termios tty;
     if (tcgetattr(serial_port, &tty) != 0) {
         printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
-        return;
+        return 0;
     }
 
     tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
@@ -82,12 +84,14 @@ void ubx_uart_create() {
 
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
         printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
-        return;
+        return 0;
     }
+
+    return 1;
 }
 
-void ubx_uart_destroy() {
-    close(serial_port);
+uint8_t ubx_uart_destroy() {
+    return close(serial_port);
 }
 
 void ubx_uart_write(char * data, size_t data_length) {
@@ -95,6 +99,6 @@ void ubx_uart_write(char * data, size_t data_length) {
     tcdrain(serial_port);
 }
 
-size_t ubx_uart_read(char *buffer, size_t buffer_size) {
+size_t linux_uart_read(char * buffer, size_t buffer_size) {
     return read(serial_port, buffer, buffer_size);
 }

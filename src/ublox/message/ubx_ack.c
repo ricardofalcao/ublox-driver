@@ -11,7 +11,7 @@
 #define ACK_PAYLOAD_LENGTH 2
 #define NAK_PAYLOAD_LENGTH 2
 
-void message_process_ubx_ack(uint8_t packet_id, uint8_t *payload, size_t payload_length) {
+void ubx_process_ubx_ack(uint8_t packet_id, uint8_t *payload, size_t payload_length) {
     switch (packet_id) {
         case UBX_MESSAGE_ACK_ACK: {
             if (payload_length != ACK_PAYLOAD_LENGTH) {

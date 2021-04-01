@@ -64,11 +64,11 @@ void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length)
 
     switch (packet_class) {
         case UBX_CLASS_NAV: {
-            message_process_ubx_nav(packet_id, buffer_ubx_payload, payload_length);
+            ubx_process_ubx_nav(packet_id, buffer_ubx_payload, payload_length);
             break;
         }
         case UBX_CLASS_ACK: {
-            message_process_ubx_ack(packet_id, buffer_ubx_payload, payload_length);
+            ubx_process_ubx_ack(packet_id, buffer_ubx_payload, payload_length);
             break;
         }
     }
@@ -80,7 +80,9 @@ uint8_t *buffer_ubx_cursor = buffer_ubx;
 uint16_t ubx_payload_length = 0;
 uint8_t ubx_read_state = UBX_STATE_READY;
 
-void ubx_read_inbound(uint8_t *buffer, size_t buffer_size) {
+void ubx_uart_receive(char *_buffer, size_t buffer_size) {
+    uint8_t * buffer = (uint8_t *) _buffer;
+
     uint8_t c;
     for (size_t i = 0; i < buffer_size; i++) {
         c = (buffer[i] & 0xFF);

@@ -27,10 +27,10 @@ _config_port(uint8_t port_id, uint16_t tx_ready, uint32_t mode, uint32_t baud, u
     bits_write_uint16(buffer + 14, proto_out);
     bits_write_uint16(buffer + 16, flags);
 
-    ubx_write_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_PORT, buffer, sizeof(buffer));
+    ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_PORT, buffer, sizeof(buffer));
 }
 
-void config_setup_port(uint16_t baud) {
+void ubx_config_setup_port(uint16_t baud) {
 #if defined(DECODE_UBX) && defined(DECODE_NMEA)
     uint16_t proto_in = UART_PROTO_UBX | UART_PROTO_NMEA;
 #elif defined(DECODE_UBX)
@@ -51,27 +51,27 @@ void config_setup_port(uint16_t baud) {
     _config_port(UBX_PORT_USB_ID, 0, 0, 0, 0, 0, 0);
 }
 
-void config_msg_rate(uint8_t message_class, uint8_t message_id, uint8_t rate) {
+void ubx_config_msg_rate(uint8_t message_class, uint8_t message_id, uint8_t rate) {
     uint8_t buffer[CFG_PAYLOAD_LENGTH] = {0};
 
     bits_write_uint8(buffer, message_class);
     bits_write_uint8(buffer + 1, message_id);
     bits_write_uint8(buffer + 2 + UBX_PORT_UART_ID, rate);
 
-    ubx_write_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_MSG, buffer, sizeof(buffer));
+    ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_MSG, buffer, sizeof(buffer));
 }
 
-void config_nav_rate(uint16_t rate_ms, uint16_t cycles) {
+void ubx_config_nav_rate(uint16_t rate_ms, uint16_t cycles) {
     uint8_t buffer[RATE_PAYLOAD_LENGTH] = {0};
 
     bits_write_uint16(buffer, rate_ms);
     bits_write_uint16(buffer + 2, cycles);
     bits_write_uint16(buffer + 4, 0x01);
 
-    ubx_write_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_RATE, buffer, sizeof(buffer));
+    ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_RATE, buffer, sizeof(buffer));
 }
 
-void config_psm(uint8_t power_mode) {
+void ubx_config_psm(uint8_t power_mode) {
     uint8_t buffer[PSM_PAYLOAD_LENGTH] = {0};
 
     bits_write_uint8(buffer, 0);
@@ -79,5 +79,5 @@ void config_psm(uint8_t power_mode) {
     bits_write_uint16(buffer + 2, 0);
     bits_write_uint8(buffer + 4, 0);
 
-    ubx_write_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_PSM, buffer, sizeof(buffer));
+    ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_PSM, buffer, sizeof(buffer));
 }

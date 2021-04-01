@@ -9,12 +9,18 @@
  *
  */
 
+// Character used to mark the beggining of a new NMEA message
 #define NMEA_SYNC_CHAR '$'
+// Character used to mark the end of a new NMEA message
 #define NMEA_TERM_CHAR '\n'
 
+// UBX packet start bytes (0xB5 0x62)
 #define UBX_SYNC_CHAR_1             0xB5
 #define UBX_SYNC_CHAR_2             0x62
 
+/*
+ * UBX packet classes and packet ids
+ */
 #define UBX_CLASS_NAV               0x01
 #define UBX_MESSAGE_NAV_PVT         0x07
 #define UBX_MESSAGE_NAV_HPPOSLLH    0x14
@@ -44,6 +50,9 @@
 #define UBX_CLASS_SEC               0x27
 #define UBX_CLASS_HNR               0x28
 
+/*
+ * UBX Power saving mode
+ */
 #define UBX_PSM_NONE                0x00
 #define UBX_PSM_BALANCED            0x01
 #define UBX_PSM_AGGRESSIVE_1        0x03
@@ -54,6 +63,9 @@
  *
  */
 
+/*
+ * UBX Port IDs
+ */
 #define UBX_PORT_I2C_ID             0x00
 #define UBX_PORT_UART_ID            0x01
 #define UBX_PORT_USB_ID             0x03
@@ -63,18 +75,27 @@
  *
  */
 
+/*
+ * GPS Time flags
+ */
 #define UBX_TIME_FLAG_VALID_DATE        0x01
 #define UBX_TIME_FLAG_VALID_TIME        0x02
 #define UBX_TIME_FLAG_FULLY_RESOLVED    0x04
 #define UBX_TIME_FLAG_VALID_MAG         0x08
 
-#define UBX_FIX_NONE                    0x00
-#define UBX_FIX_DEAD_RECKONING          0x01
-#define UBX_FIX_2D                      0x02
-#define UBX_FIX_3D                      0x03
-#define UBX_FIX_GNSS_DEAD_RECKONING     0x04
-#define UBX_FIX_TIME_ONLY               0x05
+/*
+ * GPS Fix type
+ */
+#define UBX_FIX_TYPE_NONE                    0x00
+#define UBX_FIX_TYPE_DEAD_RECKONING          0x01
+#define UBX_FIX_TYPE_2D                      0x02
+#define UBX_FIX_TYPE_3D                      0x03
+#define UBX_FIX_TYPE_GNSS_DEAD_RECKONING     0x04
+#define UBX_FIX_TYPE_TIME_ONLY               0x05
 
+/*
+ * GPS Fix flags
+ */
 #define UBX_FIX_FLAG_OK                 (uint16_t) 0x01
 #define UBX_FIX_FLAG_DIFF               (uint16_t) 0x02
 #define UBX_FIX_FLAG_HEAD_VALID         (uint16_t) 0x20

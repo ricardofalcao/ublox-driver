@@ -11,6 +11,9 @@
  *
  */
 
-void ubx_write_packet(uint8_t packet_class, uint8_t packet_id, uint8_t *payload, size_t payload_length);
+/*
+ * Send a UBX protocol packet
+ */
+void ubx_write_ubx_packet(uint8_t packet_class, uint8_t packet_id, uint8_t *payload, size_t payload_length);
 
 #endif //UBLOX_UBLOX_WRITE_H
