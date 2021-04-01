@@ -39,6 +39,7 @@
 #define UBX_MESSAGE_CFG_MSG         0x01
 #define UBX_MESSAGE_CFG_RATE        0x08
 #define UBX_MESSAGE_CFG_PSM         0x86
+#define UBX_MESSAGE_CFG_SBAS        0x16
 
 #define UBX_CLASS_UPD               0x09
 #define UBX_CLASS_MON               0x0A
@@ -104,5 +105,12 @@
 #define UBX_FIX_FLAG_CONFIRMED_TIME     (uint16_t) 0x8000
 
 #define UBX_FIX_INVALID_POSITION        0x01
+
+/*
+ * SBAS Usage
+ */
+#define UBX_SBAS_USE_RANGE              0x01
+#define UBX_SBAS_USE_CORRECTIONS        0x02
+#define UBX_SBAS_USE_INTEGRITY          0x04
 
 #endif //UBLOX_CONSTANTS_H

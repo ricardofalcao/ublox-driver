@@ -13,6 +13,7 @@
 #define CFG_PAYLOAD_LENGTH      8
 #define RATE_PAYLOAD_LENGTH     6
 #define PSM_PAYLOAD_LENGTH      8
+#define SBAS_PAYLOAD_LENGTH     8
 
 void
 _config_port(uint8_t port_id, uint16_t tx_ready, uint32_t mode, uint32_t baud, uint16_t proto_in, uint16_t proto_out,
@@ -80,4 +81,16 @@ void ubx_config_psm(uint8_t power_mode) {
     bits_write_uint8(buffer + 4, 0);
 
     ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_PSM, buffer, sizeof(buffer));
+}
+
+void ubx_config_sbas(uint8_t enabled, uint8_t usage, uint8_t max, uint32_t scanmode, uint8_t scanmode2) {
+    uint8_t buffer[SBAS_PAYLOAD_LENGTH] = {0};
+
+    bits_write_uint8(buffer, !!enabled);
+    bits_write_uint8(buffer + 1, usage);
+    bits_write_uint8(buffer + 2, max);
+    bits_write_uint8(buffer + 3, scanmode2);
+    bits_write_uint32(buffer + 4, scanmode);
+
+    ubx_write_ubx_packet(UBX_CLASS_CFG, UBX_MESSAGE_CFG_SBAS, buffer, sizeof(buffer));
 }

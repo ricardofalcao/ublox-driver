@@ -35,11 +35,26 @@
 // Serial port data baud rate
 #define UBX_PORT_UART_BAUD          9600
 
-// Navigation measurement rate in ms
-#define UBX_NAV_MEAS_RATE_MS        (uint16_t) 2000
-//
-#define UBX_NAV_CYCLES              (uint16_t) 1
+// Use SBAS
+//#define UBX_SBAS_ENABLE
 
+#ifdef UBX_SBAS_ENABLE
+// What to use SBAS for
+#define UBX_SBAS_USAGE              UBX_SBAS_USE_RANGE | UBX_SBAS_USE_CORRECTIONS
+// Maximum number of SBAS prioritized tracking channels
+#define UBX_SBAS_MAX                3
+// Which SBAS PRN numbers to search for
+#define UBX_SBAS_SCANMODE           (uint32_t) 0x0007A389
+// Configuration
+#define UBX_SBAS_SCANMODE2          0x00
+#endif
+
+// The time between GNSS measurements (in ms)
+#define UBX_NAV_MEAS_RATE_MS        (uint16_t) 2000
+// The ratio between the number of measurements and the number of navigation solutions (in cycles)
+#define UBX_NAV_MEAS_CYCLES         (uint16_t) 1
+
+// UBX Power saving mode
 #define UBX_POWERSAVE_MODE          UBX_PSM_BALANCED
 
 // Position/Velocity/Time

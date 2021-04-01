@@ -18,4 +18,6 @@ void ubx_config_nav_rate(uint16_t rate_ms, uint16_t cycles);
 
 void ubx_config_psm(uint8_t power_mode);
 
+void ubx_config_sbas(uint8_t enabled, uint8_t usage, uint8_t max, uint32_t scanmode, uint8_t scanmode2);
+
 #endif //UBLOX_UBX_CFG_H

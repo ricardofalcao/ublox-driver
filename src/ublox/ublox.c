@@ -21,7 +21,13 @@ void ubx_init() {
     }
 
     ubx_config_setup_port(UBX_PORT_UART_BAUD);
-    ubx_config_nav_rate(UBX_NAV_MEAS_RATE_MS, UBX_NAV_CYCLES);
+    ubx_config_nav_rate(UBX_NAV_MEAS_RATE_MS, UBX_NAV_MEAS_CYCLES);
+
+#ifdef UBX_SBAS_ENABLE
+    ubx_config_sbas(0x01, UBX_SBAS_USAGE, UBX_SBAS_MAX, UBX_SBAS_SCANMODE, UBX_SBAS_SCANMODE2);
+#else
+    ubx_config_sbas(0, 0, 0, 0, 0);
+#endif
 
 #ifdef UBX_SUBSCRIBE_PVT
     ubx_config_msg_rate(UBX_CLASS_NAV, UBX_MESSAGE_NAV_PVT, 1);
