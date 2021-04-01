@@ -19,4 +19,20 @@ uint32_t bits_read_uint32(uint8_t * buffer);
 
 int32_t bits_read_int32(uint8_t * buffer);
 
+/*
+ *
+ */
+
+void bits_write_uint8(uint8_t * buffer, uint8_t value);
+
+void bits_write_int8(uint8_t * buffer, int8_t value);
+
+void bits_write_uint16(uint8_t * buffer, uint16_t value);
+
+void bits_write_int16(uint8_t * buffer, int16_t value);
+
+void bits_write_uint32(uint8_t * buffer, uint32_t value);
+
+void bits_write_int32(uint8_t * buffer, int32_t value);
+
 #endif //UBLOX_BITS_H
