@@ -9,7 +9,7 @@
 #define READ_BUFFER_LENGTH 1024
 
 int main() {
-    ubx_init(460800);
+    ubx_init(9600);
 
     char buffer[READ_BUFFER_LENGTH];
 

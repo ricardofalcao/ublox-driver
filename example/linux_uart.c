@@ -3,6 +3,7 @@
 //
 
 #include "ublox/uart.h"
+#include "ublox/ublox.h"
 
 // C library headers
 #include <stdio.h>
@@ -14,9 +15,13 @@
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
 
-int serial_port;
+int serial_port = -1;
 
-void ubx_uart_create(unsigned int baud) {
+void ubx_uart_create() {
+    if (serial_port >= 0) {
+        ubx_uart_destroy();
+    }
+
     serial_port = open("/dev/ttyUSB0", O_RDWR);
 
     // Check for errors
@@ -53,7 +58,7 @@ void ubx_uart_create(unsigned int baud) {
     tty.c_cc[VMIN] = 0;
 
     speed_t speed = B9600;
-    switch (baud) {
+    switch (UBX_PORT_UART_BAUD) {
         case 57600: {
             speed = B57600;
             break;
@@ -85,8 +90,9 @@ void ubx_uart_destroy() {
     close(serial_port);
 }
 
-void ubx_uart_write(char data) {
-    write(serial_port, data, sizeof(data));
+void ubx_uart_write(char * data, size_t data_length) {
+    write(serial_port, data, data_length);
+    tcdrain(serial_port);
 }
 
 size_t ubx_uart_read(char *buffer, size_t buffer_size) {
