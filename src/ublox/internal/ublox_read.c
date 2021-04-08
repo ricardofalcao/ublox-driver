@@ -6,6 +6,7 @@
 #include "ublox/internal/ublox_read.h"
 #include "ublox/message/ubx_nav.h"
 #include "ublox/message/ubx_ack.h"
+#include "ublox/message/ubx_cfg.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -44,23 +45,29 @@ void _process_nmea() {
 //
 
 #ifdef DECODE_UBX
-void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length) {
+uint8_t buffer_ubx[UBX_BUFFER_SIZE];
+uint8_t *buffer_ubx_cursor = buffer_ubx;
+uint16_t ubx_payload_length = 0;
+uint8_t ubx_read_state = UBX_STATE_READY;
+
+void _process_ubx(uint8_t *buffer, size_t buffer_length, size_t payload_length) {
     // Validate packet checksum
-    uint8_t * buffer_ubx_ck_data = &buffer[2];
+    uint8_t *buffer_ubx_ck_data = &buffer[2];
     uint8_t ck_a = 0, ck_b = 0;
-    for(uint16_t i = 0; i < 4 + payload_length; i++) {
+    for (uint16_t i = 0; i < 4 + payload_length; i++) {
         ck_a += buffer_ubx_ck_data[i];
         ck_b += ck_a;
     }
 
     if (ck_a != buffer[buffer_length - 2] || ck_b != buffer[buffer_length - 1]) {
-        LOG("Error validating UBX checksum: Expected %x %x, got %x %x.\n", ck_a, ck_b, buffer[buffer_length - 2], buffer[buffer_length - 1]);
+        LOGF("Error validating UBX checksum: Expected %x %x, got %x %x.\n", ck_a, ck_b, buffer[buffer_length - 2],
+             buffer[buffer_length - 1]);
         return;
     }
 
     uint8_t packet_class = buffer[2];
     uint8_t packet_id = buffer[3];
-    uint8_t * buffer_ubx_payload = &buffer[6];
+    uint8_t *buffer_ubx_payload = &buffer[6];
 
     switch (packet_class) {
         case UBX_CLASS_NAV: {
@@ -71,17 +78,17 @@ void _process_ubx(uint8_t * buffer, size_t buffer_length, size_t payload_length)
             ubx_process_ubx_ack(packet_id, buffer_ubx_payload, payload_length);
             break;
         }
+        case UBX_CLASS_CFG: {
+            ubx_process_ubx_cfg(packet_id, buffer_ubx_payload, payload_length);
+            break;
+        }
     }
 }
 
 #endif
-uint8_t buffer_ubx[UBX_BUFFER_SIZE];
-uint8_t *buffer_ubx_cursor = buffer_ubx;
-uint16_t ubx_payload_length = 0;
-uint8_t ubx_read_state = UBX_STATE_READY;
 
 void ubx_uart_receive(char *_buffer, size_t buffer_size) {
-    uint8_t * buffer = (uint8_t *) _buffer;
+    uint8_t *buffer = (uint8_t *) _buffer;
 
     uint8_t c;
     for (size_t i = 0; i < buffer_size; i++) {
@@ -199,4 +206,19 @@ void ubx_uart_receive(char *_buffer, size_t buffer_size) {
         }
 #endif
     }
+
+}
+
+void ubx_uart_reset() {
+#ifdef DECODE_NMEA
+    buffer_nmea_cursor = buffer_nmea;
+    nmea_read_state = NMEA_STATE_READY;
+#endif
+
+
+#ifdef DECODE_UBX
+    buffer_ubx_cursor = buffer_ubx;
+    ubx_payload_length = 0;
+    ubx_read_state = UBX_STATE_READY;
+#endif
 }

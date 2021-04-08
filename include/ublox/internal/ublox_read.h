@@ -30,4 +30,9 @@
  */
 void ubx_uart_receive(char * buffer, size_t buffer_size);
 
+/*
+ * Resets the UART decoding state machine
+ */
+void ubx_uart_reset();
+
 #endif //UBLOX_UBLOX_READ_H

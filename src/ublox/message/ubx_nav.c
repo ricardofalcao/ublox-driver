@@ -20,8 +20,8 @@ GpsVelocity_t _velocity;
 #ifdef UBX_SUBSCRIBE_PVT
 void _process_pvt(uint8_t *payload, size_t payload_length) {
     if (payload_length != PVT_PAYLOAD_LENGTH) {
-        LOG("Error decoding NAV-PVT packet: Payload length did not match (%d != %d)", payload_length,
-            PVT_PAYLOAD_LENGTH);
+        LOGF("Error decoding NAV-PVT packet: Payload length did not match (%d != %d)", payload_length,
+             PVT_PAYLOAD_LENGTH);
         return;
     }
 
@@ -97,8 +97,8 @@ void _process_hpposllh(uint8_t *payload, size_t payload_length) {
 #ifdef UBX_SUBSCRIBE_DOP
 void _process_dop(uint8_t *payload, size_t payload_length) {
     if (payload_length != DOP_PAYLOAD_LENGTH) {
-        LOG("Error decoding NAV-DOP packet: Payload length did not match (%d != %d)", payload_length,
-            PVT_PAYLOAD_LENGTH);
+        LOGF("Error decoding NAV-DOP packet: Payload length did not match (%d != %d)", payload_length,
+             PVT_PAYLOAD_LENGTH);
         return;
     }
 
@@ -116,8 +116,8 @@ void _process_dop(uint8_t *payload, size_t payload_length) {
 
 void _process_eoe(uint8_t *payload, size_t payload_length) {
     if (payload_length != EOE_PAYLOAD_LENGTH) {
-        LOG("Error decoding NAV-EOE packet: Payload length did not match (%d != %d)", payload_length,
-            PVT_PAYLOAD_LENGTH);
+        LOGF("Error decoding NAV-EOE packet: Payload length did not match (%d != %d)", payload_length,
+             PVT_PAYLOAD_LENGTH);
         return;
     }
 
@@ -125,7 +125,9 @@ void _process_eoe(uint8_t *payload, size_t payload_length) {
     ubx_fix = _fix;
     ubx_velocity = _velocity;
 
-    LOG("[%d/%d/%d %d:%d:%d.%d] Fix: %d(%d)  |  Lat: %.9f deg  | Lon: %.9f deg  | H: %.2f mm\n", ubx_fix.time.day, ubx_fix.time.month, ubx_fix.time.year, ubx_fix.time.hour, ubx_fix.time.minute, ubx_fix.time.second, ubx_fix.time.nanosecond, ubx_fix.type, !!(ubx_fix.flags & UBX_FIX_FLAG_OK), ubx_fix.latitude, ubx_fix.longitude, ubx_fix.height_msl);
+#ifdef DEBUG_INFO
+    LOGF("[%02d/%02d/%d %02d:%02d:%02d.%06d] Fix: %d(%d)  |  Lat: %.9f deg  | Lon: %.9f deg  | H: %.2f mm\n", ubx_fix.time.day, ubx_fix.time.month, ubx_fix.time.year, ubx_fix.time.hour, ubx_fix.time.minute, ubx_fix.time.second, ubx_fix.time.nanosecond, ubx_fix.type, !!(ubx_fix.flags & UBX_FIX_FLAG_OK), ubx_fix.latitude, ubx_fix.longitude, ubx_fix.height_msl);
+#endif
 }
 
 void ubx_process_ubx_nav(uint8_t packet_id, uint8_t *payload, size_t payload_length) {

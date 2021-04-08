@@ -91,7 +91,10 @@ uint8_t ubx_uart_create() {
 }
 
 uint8_t ubx_uart_destroy() {
-    return close(serial_port);
+    tcdrain(serial_port);
+    uint8_t result = close(serial_port);
+    serial_port = -1;
+    return result;
 }
 
 void ubx_uart_write(char * data, size_t data_length) {

@@ -27,4 +27,9 @@ extern GpsVelocity_t ubx_velocity;
  */
 void ubx_init();
 
+/*
+ * Reinitializes the driver. This reopens the connection to the configured serial port.
+ */
+void ubx_reinit();
+
 #endif//UBLOX_UBLOX_H

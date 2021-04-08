@@ -35,11 +35,15 @@ void ubx_write_ubx_packet(uint8_t packet_class, uint8_t packet_id, uint8_t *payl
     ubx_uart_write(&packet_id, sizeof(packet_id));
     ubx_uart_write(&payload_length_lsb, sizeof(payload_length_lsb));
     ubx_uart_write(&payload_length_msb, sizeof(payload_length_msb));
-    ubx_uart_write(payload, payload_length);
+
+    if (payload_length > 0) {
+        ubx_uart_write(payload, payload_length);
+    }
+
     ubx_uart_write(&ck_a, sizeof(ck_a));
     ubx_uart_write(&ck_b, sizeof(ck_b));
 
-#ifdef DEBUG
-    LOG("%x %x\n", ck_a, ck_b);
+#ifdef DEBUG_PACKETS
+    LOGF("[Write CS] %x %x\n", ck_a, ck_b);
 #endif
 }
